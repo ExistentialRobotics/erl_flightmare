@@ -6,8 +6,8 @@ namespace flightlib {
 class StaticObject {
  public:
   StaticObject(const std::string& id, const std::string& prefab_id)
-    : id_(id), prefab_id_(prefab_id){};
-  virtual ~StaticObject(){};
+      : id_(id), prefab_id_(prefab_id) {};
+  virtual ~StaticObject() {};
 
   // public set functions
   virtual void setPosition(const Vector<3>& position) { position_ = position; };

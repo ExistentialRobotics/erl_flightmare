@@ -1,8 +1,9 @@
 #include "flightlib/objects/quadrotor.hpp"
-#include "flightlib/common/quad_state.hpp"
-#include "flightlib/dynamics/quadrotor_dynamics.hpp"
 
 #include <gtest/gtest.h>
+
+#include "flightlib/common/quad_state.hpp"
+#include "flightlib/dynamics/quadrotor_dynamics.hpp"
 
 using namespace flightlib;
 
@@ -30,8 +31,8 @@ TEST(Quadrotor, Constructor) {
 
   //
   const std::string cfg_path =
-    getenv("FLIGHTMARE_PATH") +
-    std::string("/flightlib/configs/quadrotor_env.yaml");
+      getenv("FLIGHTMARE_PATH") +
+      std::string("/flightlib/configs/quadrotor_env.yaml");
   Quadrotor quad2(cfg_path);
   quad2.getState(&quad_state);
 

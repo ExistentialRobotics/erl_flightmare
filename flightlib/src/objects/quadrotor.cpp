@@ -2,10 +2,11 @@
 
 namespace flightlib {
 
-Quadrotor::Quadrotor(const std::string &cfg_path)
-  : world_box_((Matrix<3, 2>() << -100, 100, -100, 100, -100, 100).finished()),
-    size_(1.0, 1.0, 1.0),
-    collision_(false) {
+Quadrotor::Quadrotor(const std::string& cfg_path)
+    : world_box_(
+          (Matrix<3, 2>() << -100, 100, -100, 100, -100, 100).finished()),
+      size_(1.0, 1.0, 1.0),
+      collision_(false) {
   //
   YAML::Node cfg = YAML::LoadFile(cfg_path);
 
@@ -14,17 +15,18 @@ Quadrotor::Quadrotor(const std::string &cfg_path)
   init();
 }
 
-Quadrotor::Quadrotor(const QuadrotorDynamics &dynamics)
-  : world_box_((Matrix<3, 2>() << -100, 100, -100, 100, -100, 100).finished()),
-    dynamics_(dynamics),
-    size_(1.0, 1.0, 1.0),
-    collision_(false) {
+Quadrotor::Quadrotor(const QuadrotorDynamics& dynamics)
+    : world_box_(
+          (Matrix<3, 2>() << -100, 100, -100, 100, -100, 100).finished()),
+      dynamics_(dynamics),
+      size_(1.0, 1.0, 1.0),
+      collision_(false) {
   init();
 }
 
 Quadrotor::~Quadrotor() {}
 
-bool Quadrotor::run(const Command &cmd, const Scalar ctl_dt) {
+bool Quadrotor::run(const Command& cmd, const Scalar ctl_dt) {
   if (!setCommand(cmd)) return false;
   return run(ctl_dt);
 }
@@ -45,8 +47,8 @@ bool Quadrotor::run(const Scalar ctl_dt) {
     const Scalar sim_dt = std::min(remain_ctl_dt, max_dt);
 
     const Vector<4> motor_thrusts_des =
-      cmd_.isSingleRotorThrusts() ? cmd_.thrusts
-                                  : runFlightCtl(sim_dt, state_.w, cmd_);
+        cmd_.isSingleRotorThrusts() ? cmd_.thrusts
+                                    : runFlightCtl(sim_dt, state_.w, cmd_);
 
     runMotors(sim_dt, motor_thrusts_des);
     // motor_thrusts_ = cmd_.thrusts;
@@ -89,7 +91,7 @@ bool Quadrotor::reset(void) {
   return true;
 }
 
-bool Quadrotor::reset(const QuadState &state) {
+bool Quadrotor::reset(const QuadState& state) {
   if (!state.valid()) return false;
   state_ = state;
   motor_omega_.setZero();
@@ -97,15 +99,15 @@ bool Quadrotor::reset(const QuadState &state) {
   return true;
 }
 
-Vector<4> Quadrotor::runFlightCtl(const Scalar sim_dt, const Vector<3> &omega,
-                                  const Command &command) {
+Vector<4> Quadrotor::runFlightCtl(const Scalar sim_dt, const Vector<3>& omega,
+                                  const Command& command) {
   const Scalar force = dynamics_.getMass() * command.collective_thrust;
 
   const Vector<3> omega_err = command.omega - omega;
 
   const Vector<3> body_torque_des =
-    dynamics_.getJ() * Kinv_ang_vel_tau_ * omega_err +
-    state_.w.cross(dynamics_.getJ() * state_.w);
+      dynamics_.getJ() * Kinv_ang_vel_tau_ * omega_err +
+      state_.w.cross(dynamics_.getJ() * state_.w);
 
   const Vector<4> thrust_and_torque(force, body_torque_des.x(),
                                     body_torque_des.y(), body_torque_des.z());
@@ -116,11 +118,11 @@ Vector<4> Quadrotor::runFlightCtl(const Scalar sim_dt, const Vector<3> &omega,
 }
 
 void Quadrotor::runMotors(const Scalar sim_dt,
-                          const Vector<4> &motor_thruts_des) {
+                          const Vector<4>& motor_thruts_des) {
   const Vector<4> motor_omega_des =
-    dynamics_.motorThrustToOmega(motor_thruts_des);
+      dynamics_.motorThrustToOmega(motor_thruts_des);
   const Vector<4> motor_omega_clamped =
-    dynamics_.clampMotorOmega(motor_omega_des);
+      dynamics_.clampMotorOmega(motor_omega_des);
 
   // simulate motors as a first-order system
   const Scalar c = std::exp(-sim_dt * dynamics_.getMotorTauInv());
@@ -130,7 +132,7 @@ void Quadrotor::runMotors(const Scalar sim_dt,
   motor_thrusts_ = dynamics_.clampThrust(motor_thrusts_);
 }
 
-bool Quadrotor::setCommand(const Command &cmd) {
+bool Quadrotor::setCommand(const Command& cmd) {
   if (!cmd.valid()) return false;
   cmd_ = cmd;
 
@@ -145,7 +147,7 @@ bool Quadrotor::setCommand(const Command &cmd) {
   return true;
 }
 
-bool Quadrotor::setState(const QuadState &state) {
+bool Quadrotor::setState(const QuadState& state) {
   if (!state.valid()) return false;
   state_ = state;
   return true;
@@ -160,8 +162,7 @@ bool Quadrotor::setWorldBox(const Ref<Matrix<3, 2>> box) {
   return true;
 }
 
-
-bool Quadrotor::constrainInWorldBox(const QuadState &old_state) {
+bool Quadrotor::constrainInWorldBox(const QuadState& old_state) {
   if (!old_state.valid()) return false;
 
   // violate world box constraint in the x-axis
@@ -196,7 +197,7 @@ bool Quadrotor::constrainInWorldBox(const QuadState &old_state) {
   return true;
 }
 
-bool Quadrotor::getState(QuadState *const state) const {
+bool Quadrotor::getState(QuadState* const state) const {
   if (!state_.valid()) return false;
 
   *state = state_;
@@ -213,22 +214,22 @@ bool Quadrotor::getMotorOmega(Ref<Vector<4>> motor_omega) const {
   return true;
 }
 
-bool Quadrotor::getDynamics(QuadrotorDynamics *const dynamics) const {
+bool Quadrotor::getDynamics(QuadrotorDynamics* const dynamics) const {
   if (!dynamics_.valid()) return false;
   *dynamics = dynamics_;
   return true;
 }
 
-const QuadrotorDynamics &Quadrotor::getDynamics() { return dynamics_; }
+const QuadrotorDynamics& Quadrotor::getDynamics() { return dynamics_; }
 
-bool Quadrotor::updateDynamics(const QuadrotorDynamics &dynamics) {
+bool Quadrotor::updateDynamics(const QuadrotorDynamics& dynamics) {
   if (!dynamics.valid()) {
     std::cout << "[Quadrotor] dynamics is not valid!" << std::endl;
     return false;
   }
   dynamics_ = dynamics;
   integrator_ptr_ =
-    std::make_unique<IntegratorRK4>(dynamics_.getDynamicsFunction(), 2.5e-3);
+      std::make_unique<IntegratorRK4>(dynamics_.getDynamicsFunction(), 2.5e-3);
 
   B_allocation_ = dynamics_.getAllocationMatrix();
   B_allocation_inv_ = B_allocation_.inverse();

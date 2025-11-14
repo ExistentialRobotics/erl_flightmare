@@ -1,11 +1,11 @@
 #pragma once
 
 #include <yaml-cpp/yaml.h>
+
 #include <deque>
 #include <functional>
 #include <memory>
 #include <mutex>
-
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -16,7 +16,6 @@
 namespace flightlib {
 
 enum CameraLayer { DepthMap = 1, Segmentation = 2, OpticalFlow = 3 };
-
 
 class RGBCamera : SensorBase {
  public:

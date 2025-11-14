@@ -8,7 +8,7 @@ class DynamicsBase {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
  public:
   using DynamicsFunction =
-    std::function<bool(const Ref<const Vector<>>, Ref<Vector<>>)>;
+      std::function<bool(const Ref<const Vector<>>, Ref<Vector<>>)>;
 
   DynamicsBase();
   virtual ~DynamicsBase();

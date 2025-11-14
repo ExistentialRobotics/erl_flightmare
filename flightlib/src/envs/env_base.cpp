@@ -14,7 +14,7 @@ void EnvBase::render() {}
 
 void EnvBase::updateExtraInfo() {}
 
-bool EnvBase::isTerminalState(Scalar &reward) {
+bool EnvBase::isTerminalState(Scalar& reward) {
   reward = 0.f;
   return false;
 }

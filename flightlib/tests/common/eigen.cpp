@@ -27,7 +27,7 @@ TEST(EigenChecks, EigenQuaternionSequence) {
   const Matrix<3, 3> R3 = R2 * R1;
 
   EXPECT_TRUE(R3.isApprox(Rq3))
-    << "Quternion multiplication sequence does not follow rotation!";
+      << "Quternion multiplication sequence does not follow rotation!";
 
   const Vector<3> r = Vector<3>::Random();
   const Vector<3> r_R3 = R3 * r;
@@ -53,9 +53,9 @@ TEST(EigenChecks, EigenQuaternionRotationDirection) {
   const Quaternion qy90(sqrt(0.5), 0, sqrt(0.5), 0);
   const Quaternion qy90z90 = qz90 * qy90;
   const Matrix<3, 3> Rz90 =
-    (Matrix<3, 3>() << 0, -1, 0, 1, 0, 0, 0, 0, 1).finished();
+      (Matrix<3, 3>() << 0, -1, 0, 1, 0, 0, 0, 0, 1).finished();
   const Matrix<3, 3> Ry90 =
-    (Matrix<3, 3>() << 0, 0, 1, 0, 1, 0, -1, 0, 0).finished();
+      (Matrix<3, 3>() << 0, 0, 1, 0, 1, 0, -1, 0, 0).finished();
   const Matrix<3, 3> Ry90z90 = Rz90 * Ry90;
 
   const Vector<3> r(1, 0, 0);
@@ -68,20 +68,20 @@ TEST(EigenChecks, EigenQuaternionRotationDirection) {
   EXPECT_TRUE(qz90.toRotationMatrix().isApprox(Rz90));
 
   EXPECT_TRUE((Ry90z90 * r).isApprox(r_Ry90z90expected))
-    << "Expected: " << r_Ry90z90expected.transpose() << std::endl
-    << "Actual:   " << (Ry90z90 * r).transpose() << std::endl;
+      << "Expected: " << r_Ry90z90expected.transpose() << std::endl
+      << "Actual:   " << (Ry90z90 * r).transpose() << std::endl;
   EXPECT_TRUE((qy90z90.toRotationMatrix() * r).isApprox(r_Ry90z90expected))
-    << "Expected: " << r_Ry90z90expected.transpose() << std::endl
-    << "Actual:   " << (qy90z90.toRotationMatrix() * r).transpose()
-    << std::endl;
+      << "Expected: " << r_Ry90z90expected.transpose() << std::endl
+      << "Actual:   " << (qy90z90.toRotationMatrix() * r).transpose()
+      << std::endl;
   EXPECT_TRUE((qy90z90 * r).isApprox(r_Ry90z90expected))
-    << "Expected: " << r_Ry90z90expected.transpose() << std::endl
-    << "Actual:   " << (qy90z90 * r).transpose() << std::endl;
+      << "Expected: " << r_Ry90z90expected.transpose() << std::endl
+      << "Actual:   " << (qy90z90 * r).transpose() << std::endl;
   EXPECT_TRUE(qy90z90.toRotationMatrix().isApprox(Ry90z90))
-    << "Expected: " << std::endl
-    << Ry90z90 << std::endl
-    << "Actual:   " << std::endl
-    << qy90z90.toRotationMatrix() << std::endl;
+      << "Expected: " << std::endl
+      << Ry90z90 << std::endl
+      << "Actual:   " << std::endl
+      << qy90z90.toRotationMatrix() << std::endl;
 }
 
 TEST(EigenChecks, QuaternionCrossMatrix) {

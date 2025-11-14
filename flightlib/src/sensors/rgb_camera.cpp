@@ -3,12 +3,12 @@
 namespace flightlib {
 
 RGBCamera::RGBCamera()
-  : channels_(3),
-    width_(720),
-    height_(480),
-    fov_{70.0},
-    depth_scale_{0.2},
-    enabled_layers_({false, false, false}) {}
+    : channels_(3),
+      width_(720),
+      height_(480),
+      fov_{70.0},
+      depth_scale_{0.2},
+      enabled_layers_({false, false, false}) {}
 
 RGBCamera::~RGBCamera() {}
 
@@ -43,8 +43,9 @@ bool RGBCamera::setRelPose(const Ref<Vector<3>> B_r_BC,
                            const Ref<Matrix<3, 3>> R_BC) {
   if (!B_r_BC.allFinite() || !R_BC.allFinite()) {
     logger_.error(
-      "The setting value for Camera Relative Pose Matrix is not valid, discard "
-      "the setting.");
+        "The setting value for Camera Relative Pose Matrix is not valid, "
+        "discard "
+        "the setting.");
     return false;
   }
   B_r_BC_ = B_r_BC;
@@ -57,7 +58,7 @@ bool RGBCamera::setRelPose(const Ref<Vector<3>> B_r_BC,
 bool RGBCamera::setWidth(const int width) {
   if (width <= 0.0) {
     logger_.warn(
-      "The setting value for Image Width is not valid, discard the setting.");
+        "The setting value for Image Width is not valid, discard the setting.");
     return false;
   }
   width_ = width;
@@ -67,8 +68,8 @@ bool RGBCamera::setWidth(const int width) {
 bool RGBCamera::setHeight(const int height) {
   if (height <= 0.0) {
     logger_.warn(
-      "The setting value for Image Height is not valid, discard the "
-      "setting.");
+        "The setting value for Image Height is not valid, discard the "
+        "setting.");
     return false;
   }
   height_ = height;
@@ -78,8 +79,8 @@ bool RGBCamera::setHeight(const int height) {
 bool RGBCamera::setFOV(const Scalar fov) {
   if (fov <= 0.0) {
     logger_.warn(
-      "The setting value for Camera Field-of-View is not valid, discard the "
-      "setting.");
+        "The setting value for Camera Field-of-View is not valid, discard the "
+        "setting.");
     return false;
   }
   fov_ = fov;
@@ -89,8 +90,8 @@ bool RGBCamera::setFOV(const Scalar fov) {
 bool RGBCamera::setDepthScale(const Scalar depth_scale) {
   if (depth_scale_ < 0.0 || depth_scale_ > 1.0) {
     logger_.warn(
-      "The setting value for Camera Depth Scale is not valid, discard the "
-      "setting.");
+        "The setting value for Camera Depth Scale is not valid, discard the "
+        "setting.");
     return false;
   }
   depth_scale_ = depth_scale;
@@ -100,8 +101,8 @@ bool RGBCamera::setDepthScale(const Scalar depth_scale) {
 bool RGBCamera::setPostProcesscing(const std::vector<bool>& enabled_layers) {
   if (enabled_layers_.size() != enabled_layers.size()) {
     logger_.warn(
-      "Vector size does not match. The vector size should be equal to %d.",
-      enabled_layers_.size());
+        "Vector size does not match. The vector size should be equal to %d.",
+        enabled_layers_.size());
     return false;
   }
   enabled_layers_ = enabled_layers;

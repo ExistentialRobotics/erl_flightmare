@@ -1,8 +1,9 @@
 #include "flightlib/bridges/unity_bridge.hpp"
-#include "flightlib/common/logger.hpp"
-#include "flightlib/objects/static_gate.hpp"
 
 #include <gtest/gtest.h>
+
+#include "flightlib/common/logger.hpp"
+#include "flightlib/objects/static_gate.hpp"
 
 using namespace flightlib;
 
@@ -201,7 +202,6 @@ TEST(UnityBridge, Spawn100StaticGate) {
   rgb->setPostProcesscing(std::vector<bool>{false, false, true});
   quad->addRGBCamera(rgb);
   unity_bridge.addQuadrotor(quad);
-
 
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 25; j++) {

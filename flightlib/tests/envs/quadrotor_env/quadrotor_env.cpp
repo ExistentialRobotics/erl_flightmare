@@ -1,10 +1,12 @@
 #include "flightlib/envs/quadrotor_env/quadrotor_env.hpp"
-#include "flightlib/common/logger.hpp"
 
 #include <gtest/gtest.h>
 #include <yaml-cpp/yaml.h>
+
 #include <fstream>
 #include <iostream>
+
+#include "flightlib/common/logger.hpp"
 
 using namespace flightlib;
 
@@ -18,8 +20,8 @@ TEST(QuadrotorEnv, Constructor) {
 
   // create env and load configuration from a yaml file.
   std::string config_path =
-    getenv("FLIGHTMARE_PATH") +
-    std::string("/flightlib/configs/quadrotor_env.yaml");
+      getenv("FLIGHTMARE_PATH") +
+      std::string("/flightlib/configs/quadrotor_env.yaml");
   logger.info("Environment configuration path \"%s\".", config_path.c_str());
   QuadrotorEnv env0(config_path);
 

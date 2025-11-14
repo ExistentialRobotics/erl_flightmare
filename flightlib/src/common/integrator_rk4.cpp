@@ -25,7 +25,6 @@ bool IntegratorRK4::step(const Ref<const Vector<>> initial, const Scalar dt,
   final = initial + dt * k.col(2);
   if (!this->dynamics_(final, k.col(3))) return false;
 
-
   final = initial + dt * k * rk4_sum_vec;
 
   return true;

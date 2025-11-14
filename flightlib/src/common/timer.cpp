@@ -6,25 +6,25 @@
 namespace flightlib {
 
 Timer::Timer(const std::string name, const std::string module)
-  : name_(name),
-    module_(module),
-    timing_mean_(0.0),
-    timing_last_(0.0),
-    timing_S_(0.0),
-    timing_min_(std::numeric_limits<Scalar>::max()),
-    timing_max_(0.0),
-    n_samples_(0) {}
+    : name_(name),
+      module_(module),
+      timing_mean_(0.0),
+      timing_last_(0.0),
+      timing_S_(0.0),
+      timing_min_(std::numeric_limits<Scalar>::max()),
+      timing_max_(0.0),
+      n_samples_(0) {}
 
 Timer::Timer(const Timer& other)
-  : name_(other.name_),
-    module_(other.module_),
-    t_start_(other.t_start_),
-    timing_mean_(other.timing_mean_),
-    timing_last_(other.timing_last_),
-    timing_S_(other.timing_S_),
-    timing_min_(other.timing_min_),
-    timing_max_(other.timing_max_),
-    n_samples_(other.n_samples_) {}
+    : name_(other.name_),
+      module_(other.module_),
+      t_start_(other.t_start_),
+      timing_mean_(other.timing_mean_),
+      timing_last_(other.timing_last_),
+      timing_S_(other.timing_S_),
+      timing_min_(other.timing_min_),
+      timing_max_(other.timing_max_),
+      n_samples_(other.n_samples_) {}
 
 void Timer::tic() { t_start_ = std::chrono::high_resolution_clock::now(); }
 
@@ -32,8 +32,8 @@ Scalar Timer::toc() {
   // Calculate timing.
   const TimePoint t_end = std::chrono::high_resolution_clock::now();
   timing_last_ = 1e-9 * std::chrono::duration_cast<std::chrono::nanoseconds>(
-                          t_end - t_start_)
-                          .count();
+                            t_end - t_start_)
+                            .count();
   n_samples_++;
 
   // Set timing, filter if already initialized.
@@ -42,9 +42,9 @@ Scalar Timer::toc() {
   } else {
     const Scalar timing_mean_prev = timing_mean_;
     timing_mean_ =
-      timing_mean_prev + (timing_last_ - timing_mean_prev) / n_samples_;
+        timing_mean_prev + (timing_last_ - timing_mean_prev) / n_samples_;
     timing_S_ = timing_S_ + (timing_last_ - timing_mean_prev) *
-                              (timing_last_ - timing_mean_);
+                                (timing_last_ - timing_mean_);
   }
   timing_min_ = (timing_last_ < timing_min_) ? timing_last_ : timing_min_;
   timing_max_ = (timing_last_ > timing_max_) ? timing_last_ : timing_max_;
@@ -105,7 +105,7 @@ std::ostream& operator<<(std::ostream& os, const Timer& timer) {
 }
 
 ScopedTimer::ScopedTimer(const std::string name, const std::string module)
-  : Timer(name, module) {
+    : Timer(name, module) {
   this->tic();
 }
 

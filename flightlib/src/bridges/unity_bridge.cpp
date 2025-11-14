@@ -4,14 +4,14 @@ namespace flightlib {
 
 // constructor
 UnityBridge::UnityBridge()
-  : client_address_("tcp://*"),
-    pub_port_("10253"),
-    sub_port_("10254"),
-    num_frames_(0),
-    last_downloaded_utime_(0),
-    last_download_debug_utime_(0),
-    u_packet_latency_(0),
-    unity_ready_(false) {
+    : client_address_("tcp://*"),
+      pub_port_("10253"),
+      sub_port_("10254"),
+      num_frames_(0),
+      last_downloaded_utime_(0),
+      last_download_debug_utime_(0),
+      u_packet_latency_(0),
+      unity_ready_(false) {
   // initialize connections upon creating unity bridge
   initializeConnections();
 }
@@ -46,8 +46,8 @@ bool UnityBridge::connectUnity(const SceneID scene_id) {
     if (time_out_count / 1e6 > unity_connection_time_out_) {
       std::cout << "]" << std::endl;
       logger_.warn(
-        "Unity Connection time out! Make sure that Unity Standalone "
-        "or Unity Editor is running the Flightmare.");
+          "Unity Connection time out! Make sure that Unity Standalone "
+          "or Unity Editor is running the Flightmare.");
       return false;
     }
     // initialize Scene settings
@@ -237,11 +237,9 @@ bool UnityBridge::handleOutput() {
           new_image = new_image * (100.f);
           cv::flip(new_image, new_image, 0);
 
-
           unity_quadrotors_[idx]
-            ->getCameras()[cam.output_index]
-            ->feedImageQueue(layer_idx, new_image);
-
+              ->getCameras()[cam.output_index]
+              ->feedImageQueue(layer_idx, new_image);
 
         } else {
           uint32_t image_len = cam.width * cam.height * cam.channels;
@@ -254,7 +252,7 @@ bool UnityBridge::handleOutput() {
           image_i = image_i + 1;
           // Pack image into cv::Mat
           cv::Mat new_image =
-            cv::Mat(cam.height, cam.width, CV_MAKETYPE(CV_8U, cam.channels));
+              cv::Mat(cam.height, cam.width, CV_MAKETYPE(CV_8U, cam.channels));
           memcpy(new_image.data, image_data, image_len);
           // Flip image since OpenCV origin is upper left, but Unity's is lower
           // left.
@@ -265,8 +263,8 @@ bool UnityBridge::handleOutput() {
             cv::cvtColor(new_image, new_image, CV_RGB2BGR);
           }
           unity_quadrotors_[idx]
-            ->getCameras()[cam.output_index]
-            ->feedImageQueue(layer_idx, new_image);
+              ->getCameras()[cam.output_index]
+              ->feedImageQueue(layer_idx, new_image);
         }
       }
     }
@@ -291,7 +289,7 @@ bool UnityBridge::getPointCloud(PointCloudMessage_t& pointcloud_msg,
 
   Scalar run_time = 0.0;
   while (!std::experimental::filesystem::exists(
-    pointcloud_msg.path + pointcloud_msg.file_name + ".ply")) {
+      pointcloud_msg.path + pointcloud_msg.file_name + ".ply")) {
     if (run_time >= time_out) {
       logger_.warn("Timeout... PointCloud was not saved within expected time.");
       return false;

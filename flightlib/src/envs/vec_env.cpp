@@ -2,18 +2,18 @@
 
 namespace flightlib {
 
-template<typename EnvBase>
+template <typename EnvBase>
 VecEnv<EnvBase>::VecEnv()
-  : VecEnv(getenv("FLIGHTMARE_PATH") +
-           std::string("/flightlib/configs/vec_env.yaml")) {}
+    : VecEnv(getenv("FLIGHTMARE_PATH") +
+             std::string("/flightlib/configs/vec_env.yaml")) {}
 
-template<typename EnvBase>
+template <typename EnvBase>
 VecEnv<EnvBase>::VecEnv(const YAML::Node& cfg_node) : cfg_(cfg_node) {
   // initialization
   init();
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 VecEnv<EnvBase>::VecEnv(const std::string& cfgs, const bool from_file) {
   // load environment configuration
   if (from_file) {
@@ -27,7 +27,7 @@ VecEnv<EnvBase>::VecEnv(const std::string& cfgs, const bool from_file) {
   init();
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 void VecEnv<EnvBase>::init(void) {
   //
   unity_render_ = cfg_["env"]["render"].as<bool>();
@@ -58,14 +58,14 @@ void VecEnv<EnvBase>::init(void) {
   }
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 VecEnv<EnvBase>::~VecEnv() {}
 
-template<typename EnvBase>
+template <typename EnvBase>
 bool VecEnv<EnvBase>::reset(Ref<MatrixRowMajor<>> obs) {
   if (obs.rows() != num_envs_ || obs.cols() != obs_dim_) {
     logger_.error(
-      "Input matrix dimensions do not match with that of the environment.");
+        "Input matrix dimensions do not match with that of the environment.");
     return false;
   }
 
@@ -76,7 +76,7 @@ bool VecEnv<EnvBase>::reset(Ref<MatrixRowMajor<>> obs) {
   return true;
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 bool VecEnv<EnvBase>::step(Ref<MatrixRowMajor<>> act, Ref<MatrixRowMajor<>> obs,
                            Ref<Vector<>> reward, Ref<BoolVector<>> done,
                            Ref<MatrixRowMajor<>> extra_info) {
@@ -87,7 +87,7 @@ bool VecEnv<EnvBase>::step(Ref<MatrixRowMajor<>> act, Ref<MatrixRowMajor<>> obs,
       extra_info.rows() != num_envs_ ||
       extra_info.cols() != extra_info_names_.size()) {
     logger_.error(
-      "Input matrix dimensions do not match with that of the environment.");
+        "Input matrix dimensions do not match with that of the environment.");
     return false;
   }
 
@@ -103,7 +103,7 @@ bool VecEnv<EnvBase>::step(Ref<MatrixRowMajor<>> act, Ref<MatrixRowMajor<>> obs,
   return true;
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 void VecEnv<EnvBase>::testStep(Ref<MatrixRowMajor<>> act,
                                Ref<MatrixRowMajor<>> obs, Ref<Vector<>> reward,
                                Ref<BoolVector<>> done,
@@ -112,26 +112,25 @@ void VecEnv<EnvBase>::testStep(Ref<MatrixRowMajor<>> act,
   envs_[0]->getObs(obs.row(0));
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 void VecEnv<EnvBase>::close() {
   for (int i = 0; i < num_envs_; i++) {
     envs_[i]->close();
   }
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 void VecEnv<EnvBase>::setSeed(const int seed) {
   int seed_inc = seed;
   for (int i = 0; i < num_envs_; i++) envs_[i]->setSeed(seed_inc++);
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 void VecEnv<EnvBase>::getObs(Ref<MatrixRowMajor<>> obs) {
   for (int i = 0; i < num_envs_; i++) envs_[i]->getObs(obs.row(i));
 }
 
-
-template<typename EnvBase>
+template <typename EnvBase>
 size_t VecEnv<EnvBase>::getEpisodeLength(void) {
   if (envs_.size() <= 0) {
     return 0;
@@ -140,13 +139,13 @@ size_t VecEnv<EnvBase>::getEpisodeLength(void) {
   }
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 void VecEnv<EnvBase>::perAgentStep(int agent_id, Ref<MatrixRowMajor<>> act,
                                    Ref<MatrixRowMajor<>> obs,
                                    Ref<Vector<>> reward, Ref<BoolVector<>> done,
                                    Ref<MatrixRowMajor<>> extra_info) {
   reward(agent_id) =
-    envs_[agent_id]->step(act.row(agent_id), obs.row(agent_id));
+      envs_[agent_id]->step(act.row(agent_id), obs.row(agent_id));
 
   Scalar terminal_reward = 0;
   done(agent_id) = envs_[agent_id]->isTerminalState(terminal_reward);
@@ -154,7 +153,7 @@ void VecEnv<EnvBase>::perAgentStep(int agent_id, Ref<MatrixRowMajor<>> act,
   envs_[agent_id]->updateExtraInfo();
   for (int j = 0; j < extra_info.cols(); j++)
     extra_info(agent_id, j) =
-      envs_[agent_id]->extra_info_[extra_info_names_[j]];
+        envs_[agent_id]->extra_info_[extra_info_names_[j]];
 
   if (done[agent_id]) {
     envs_[agent_id]->reset(obs.row(agent_id));
@@ -162,7 +161,7 @@ void VecEnv<EnvBase>::perAgentStep(int agent_id, Ref<MatrixRowMajor<>> act,
   }
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 bool VecEnv<EnvBase>::setUnity(bool render) {
   unity_render_ = render;
   if (unity_render_ && unity_bridge_ptr_ == nullptr) {
@@ -177,17 +176,17 @@ bool VecEnv<EnvBase>::setUnity(bool render) {
   return true;
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 bool VecEnv<EnvBase>::connectUnity(void) {
   if (unity_bridge_ptr_ == nullptr) return false;
   unity_ready_ = unity_bridge_ptr_->connectUnity(scene_id_);
   return unity_ready_;
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 void VecEnv<EnvBase>::isTerminalState(Ref<BoolVector<>> terminal_state) {}
 
-template<typename EnvBase>
+template <typename EnvBase>
 void VecEnv<EnvBase>::disconnectUnity(void) {
   if (unity_bridge_ptr_ != nullptr) {
     unity_bridge_ptr_->disconnectUnity();
@@ -197,7 +196,7 @@ void VecEnv<EnvBase>::disconnectUnity(void) {
   }
 }
 
-template<typename EnvBase>
+template <typename EnvBase>
 void VecEnv<EnvBase>::curriculumUpdate(void) {
   for (int i = 0; i < num_envs_; i++) envs_[i]->curriculumUpdate();
 }

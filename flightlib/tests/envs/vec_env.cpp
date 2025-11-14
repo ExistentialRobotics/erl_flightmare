@@ -1,19 +1,21 @@
 #include "flightlib/envs/vec_env.hpp"
-#include "flightlib/envs/quadrotor_env/quadrotor_env.hpp"
 
 #include <gtest/gtest.h>
 #include <yaml-cpp/yaml.h>
+
 #include <fstream>
 #include <iostream>
 #include <vector>
+
+#include "flightlib/envs/quadrotor_env/quadrotor_env.hpp"
 
 using namespace flightlib;
 
 static constexpr int SIM_STEPS_N = 20;
 
 TEST(VecEnv, Constructor) {
-  std::string config_path =
-    getenv("FLIGHTMARE_PATH") + std::string("/flightlib/configs/vec_env.yaml");
+  std::string config_path = getenv("FLIGHTMARE_PATH") +
+                            std::string("/flightlib/configs/vec_env.yaml");
 
   QuadrotorEnv env(config_path);
   // load configurations
@@ -21,7 +23,7 @@ TEST(VecEnv, Constructor) {
 
   // constructor 0
   VecEnv<QuadrotorEnv> vec_env_v0(
-    config_path);  // construct object from yaml file
+      config_path);  // construct object from yaml file
   // constructor 1
   VecEnv<QuadrotorEnv> vec_env_v1(cfg);  // construct object from yaml::node
   // // constructor 2
@@ -87,7 +89,6 @@ TEST(VecEnv, ResetEnv) {
   obs.resize(vec_num_env, vec_obs_dim + 1);
   EXPECT_FALSE(vec_env.reset(obs));
 }
-
 
 TEST(VecEnv, StepEnv) {
   VecEnv<QuadrotorEnv> vec_env;

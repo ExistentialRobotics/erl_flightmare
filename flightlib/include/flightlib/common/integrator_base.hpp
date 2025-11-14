@@ -11,7 +11,7 @@ class IntegratorBase {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
  public:
   using DynamicsFunction =
-    std::function<bool(const Ref<const Vector<>>, Ref<Vector<>>)>;
+      std::function<bool(const Ref<const Vector<>>, Ref<Vector<>>)>;
   IntegratorBase(DynamicsFunction function, const Scalar dt_max = 1e-3);
 
   bool integrate(const QuadState& initial, QuadState* const final) const;

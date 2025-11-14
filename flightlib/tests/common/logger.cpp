@@ -21,11 +21,11 @@ TEST(Logger, SimpleLogging) {
   logger.error("This could be an error, but just for demo.");
 
   logger.info(
-    "You can print strings like \"%s\", and formatted numbers like %1.3f.",
-    "text", M_PI);
+      "You can print strings like \"%s\", and formatted numbers like %1.3f.",
+      "text", M_PI);
   logger
-    << "You can use the stream operator \'<<\' just like with \'std::cout\'."
-    << std::endl;
+      << "You can use the stream operator \'<<\' just like with \'std::cout\'."
+      << std::endl;
   logger << "This can be helpul for printing complex objects like Eigen vector "
             "and matrices:"
          << std::endl

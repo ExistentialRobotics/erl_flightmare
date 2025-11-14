@@ -17,23 +17,23 @@ class Logger {
   inline std::streamsize precision(const std::streamsize n);
   inline void scientific(const bool on = true);
 
-  template<class... Args>
+  template <class... Args>
   void info(const std::string& message, const Args&... args) const;
   void info(const std::string& message) const;
 
-  template<class... Args>
+  template <class... Args>
   void warn(const std::string& message, const Args&... args) const;
   void warn(const std::string& message) const;
 
-  template<class... Args>
+  template <class... Args>
   void error(const std::string& message, const Args&... args) const;
   void error(const std::string& message) const;
 
-  template<class... Args>
+  template <class... Args>
   void fatal(const std::string& message, const Args&... args) const;
   void fatal(const std::string& message) const;
 
-  template<typename T>
+  template <typename T>
   std::ostream& operator<<(const T& printable) const;
 
   static constexpr int MAX_CHARS = 256;
@@ -54,7 +54,7 @@ class Logger {
   const bool colored_;
 };
 
-template<class... Args>
+template <class... Args>
 void Logger::info(const std::string& message, const Args&... args) const {
   char buf[MAX_CHARS];
   const int n = std::snprintf(buf, MAX_CHARS, message.c_str(), args...);
@@ -64,7 +64,7 @@ void Logger::info(const std::string& message, const Args&... args) const {
     error("=== Logging error ===\n");
 }
 
-template<class... Args>
+template <class... Args>
 void Logger::warn(const std::string& message, const Args&... args) const {
   char buf[MAX_CHARS];
   const int n = std::snprintf(buf, MAX_CHARS, message.c_str(), args...);
@@ -74,7 +74,7 @@ void Logger::warn(const std::string& message, const Args&... args) const {
     error("=== Logging error ===\n");
 }
 
-template<class... Args>
+template <class... Args>
 void Logger::error(const std::string& message, const Args&... args) const {
   char buf[MAX_CHARS];
   const int n = std::snprintf(buf, MAX_CHARS, message.c_str(), args...);
@@ -84,7 +84,7 @@ void Logger::error(const std::string& message, const Args&... args) const {
     error("=== Logging error ===\n");
 }
 
-template<class... Args>
+template <class... Args>
 void Logger::fatal(const std::string& message, const Args&... args) const {
   char buf[MAX_CHARS];
   const int n = std::snprintf(buf, MAX_CHARS, message.c_str(), args...);
@@ -94,7 +94,7 @@ void Logger::fatal(const std::string& message, const Args&... args) const {
     fatal("=== Logging error ===\n");
 }
 
-template<typename T>
+template <typename T>
 std::ostream& Logger::operator<<(const T& printable) const {
   return sink_ << name_ << printable;
 }

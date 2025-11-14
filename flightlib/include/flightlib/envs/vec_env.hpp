@@ -18,7 +18,7 @@
 
 namespace flightlib {
 
-template<typename EnvBase>
+template <typename EnvBase>
 class VecEnv {
  public:
   VecEnv();

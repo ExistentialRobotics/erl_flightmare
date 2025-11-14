@@ -4,7 +4,7 @@ namespace flightlib {
 
 IntegratorBase::IntegratorBase(IntegratorBase::DynamicsFunction function,
                                const Scalar dt_max)
-  : dynamics_(function), dt_max_(dt_max) {}
+    : dynamics_(function), dt_max_(dt_max) {}
 
 bool IntegratorBase::integrate(const QuadState& initial,
                                QuadState* const final) const {

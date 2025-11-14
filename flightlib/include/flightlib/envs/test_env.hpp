@@ -11,7 +11,7 @@
 
 namespace flightlib {
 
-template<typename EnvBase>
+template <typename EnvBase>
 class TestEnv {
  public:
   // constructor & deconstructor
@@ -19,9 +19,9 @@ class TestEnv {
   ~TestEnv();
 
   void reset(
-    Eigen::Ref<
-      Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
-      obs);
+      Eigen::Ref<
+          Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
+          obs);
 };
 
 }  // namespace flightlib

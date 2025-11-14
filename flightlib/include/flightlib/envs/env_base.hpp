@@ -5,6 +5,7 @@
 
 // standard library
 #include <unistd.h>
+
 #include <memory>
 #include <random>
 #include <unordered_map>
@@ -33,7 +34,7 @@ class EnvBase {
   virtual void close();
   virtual void render();
   virtual void updateExtraInfo();
-  virtual bool isTerminalState(Scalar &reward);
+  virtual bool isTerminalState(Scalar& reward);
 
   // auxilirary functions
   inline void setSeed(const int seed) { std::srand(seed); };

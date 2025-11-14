@@ -6,6 +6,7 @@
 
 // std libs
 #include <unistd.h>
+
 #include <experimental/filesystem>
 #include <fstream>
 #include <map>
@@ -37,7 +38,7 @@ class UnityBridge {
  public:
   // constructor & destructor
   UnityBridge();
-  ~UnityBridge(){};
+  ~UnityBridge() {};
 
   // connect function
   bool connectUnity(const SceneID scene_id);
@@ -46,11 +47,11 @@ class UnityBridge {
   // public get functions
   bool getRender(const FrameID frame_id);
   bool handleOutput();
-  bool getPointCloud(PointCloudMessage_t &pointcloud_msg,
+  bool getPointCloud(PointCloudMessage_t& pointcloud_msg,
                      Scalar time_out = 600.0);
 
   // public set functions
-  bool setScene(const SceneID &scene_id);
+  bool setScene(const SceneID& scene_id);
 
   // add object
   bool addQuadrotor(std::shared_ptr<Quadrotor> quad);
@@ -58,12 +59,12 @@ class UnityBridge {
   bool addStaticObject(std::shared_ptr<StaticObject> static_object);
 
   // public auxiliary functions
-  inline void setPubPort(const std::string &pub_port) { pub_port_ = pub_port; };
-  inline void setSubPort(const std::string &sub_port) { sub_port_ = sub_port; };
+  inline void setPubPort(const std::string& pub_port) { pub_port_ = pub_port; };
+  inline void setSubPort(const std::string& sub_port) { sub_port_ = sub_port; };
   // create unity bridge
   static std::shared_ptr<UnityBridge> getInstance(void) {
     static std::shared_ptr<UnityBridge> bridge_ptr =
-      std::make_shared<UnityBridge>();
+        std::make_shared<UnityBridge>();
     return bridge_ptr;
   };
 

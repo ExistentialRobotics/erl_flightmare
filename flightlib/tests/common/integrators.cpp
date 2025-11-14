@@ -33,8 +33,8 @@ TEST(Integrators, ManualEulerAccelerationCheck) {
 
   EXPECT_TRUE(euler.integrate(initial.x, dt, final.x));
   EXPECT_TRUE(final.x.isApprox(expected.x, tol))
-    << "expected state:   " << expected.x.transpose() << "\n"
-    << "integrated state: " << final.x.transpose() << "\n";
+      << "expected state:   " << expected.x.transpose() << "\n"
+      << "integrated state: " << final.x.transpose() << "\n";
 }
 
 TEST(Integrators, ManualRungeKuttaAccelerationCheck) {
@@ -57,8 +57,8 @@ TEST(Integrators, ManualRungeKuttaAccelerationCheck) {
 
   EXPECT_TRUE(rungekutta.integrate(initial.x, dt, final.x));
   EXPECT_TRUE(final.x.isApprox(expected.x, 1e-3))
-    << "expected state:   " << expected.x.transpose() << "\n"
-    << "integrated state: " << final.x.transpose() << "\n";
+      << "expected state:   " << expected.x.transpose() << "\n"
+      << "integrated state: " << final.x.transpose() << "\n";
 }
 
 TEST(Integrators, QuadStateInterface) {
@@ -110,9 +110,9 @@ TEST(Integrators, CheckEulerAgainstRungeKutta) {
     EXPECT_TRUE(euler.integrate(initial.x, dt, int_euler.x));
     EXPECT_TRUE(rungekutta.integrate(initial.x, dt, int_rungekutta.x));
     EXPECT_TRUE(int_euler.x.isApprox(int_rungekutta.x, tol))
-      << "Euler intergrated:\n"
-      << int_euler.x.transpose() << std::endl
-      << "RungeKutta intergrated:\n"
-      << int_rungekutta.x.transpose() << std::endl;
+        << "Euler intergrated:\n"
+        << int_euler.x.transpose() << std::endl
+        << "RungeKutta intergrated:\n"
+        << int_rungekutta.x.transpose() << std::endl;
   }
 }

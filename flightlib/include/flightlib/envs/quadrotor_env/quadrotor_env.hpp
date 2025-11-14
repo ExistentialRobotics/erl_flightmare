@@ -2,6 +2,7 @@
 
 // std lib
 #include <stdlib.h>
+
 #include <cmath>
 #include <iostream>
 
@@ -44,7 +45,7 @@ class QuadrotorEnv final : public EnvBase {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   QuadrotorEnv();
-  QuadrotorEnv(const std::string &cfg_path);
+  QuadrotorEnv(const std::string& cfg_path);
   ~QuadrotorEnv();
 
   // - public OpenAI-gym-style functions
@@ -52,19 +53,19 @@ class QuadrotorEnv final : public EnvBase {
   Scalar step(const Ref<Vector<>> act, Ref<Vector<>> obs) override;
 
   // - public set functions
-  bool loadParam(const YAML::Node &cfg);
+  bool loadParam(const YAML::Node& cfg);
 
   // - public get functions
   bool getObs(Ref<Vector<>> obs) override;
   bool getAct(Ref<Vector<>> act) const;
-  bool getAct(Command *const cmd) const;
+  bool getAct(Command* const cmd) const;
 
   // - auxiliar functions
-  bool isTerminalState(Scalar &reward) override;
+  bool isTerminalState(Scalar& reward) override;
   void addObjectsToUnity(std::shared_ptr<UnityBridge> bridge);
 
-  friend std::ostream &operator<<(std::ostream &os,
-                                  const QuadrotorEnv &quad_env);
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const QuadrotorEnv& quad_env);
 
  private:
   // quadrotor

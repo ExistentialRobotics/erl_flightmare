@@ -30,7 +30,6 @@ TEST(QuadrotorDynamics, Constructor) {
   std::cout << quad.getAllocationMatrix() << std::endl;
 }
 
-
 TEST(QuadrotorDynamics, Dynamics) {
   QuadrotorDynamics quad(MASS, ARM_LENGTH);
 
@@ -68,8 +67,8 @@ TEST(QuadrotorDynamics, Dynamics) {
     derivative_manual.qx = 0.5 * Q_right(q_omega) * random_state.qx;
     derivative_manual.v = random_state.a;
     derivative_manual.w =
-      quad.getJInv() *
-      (random_state.tau - random_state.w.cross(quad.getJ() * random_state.w));
+        quad.getJInv() *
+        (random_state.tau - random_state.w.cross(quad.getJ() * random_state.w));
 
     // Compare the derivatives.
     EXPECT_TRUE(derivative_state.x.isApprox(derivative_manual.x));
@@ -82,7 +81,7 @@ TEST(QuadrotorDynamics, VectorReference) {
   static constexpr int N = 128;
   Matrix<QuadState::SIZE, N> states = Matrix<QuadState::SIZE, N>::Random();
   Matrix<QuadState::SIZE, N> states_const =
-    Matrix<QuadState::SIZE, N>::Random();
+      Matrix<QuadState::SIZE, N>::Random();
   Matrix<QuadState::SIZE, N> derivates;
 
   for (int i = 0; i < N; ++i) {
@@ -102,7 +101,7 @@ TEST(QuadrotorDynamics, LoadParams) {
   const Scalar mass = cfg["quadrotor_dynamics"]["mass"].as<Scalar>();
   const Scalar arm_l = cfg["quadrotor_dynamics"]["arm_l"].as<Scalar>();
   const Scalar motor_tau_inv =
-    (1.0 / cfg["quadrotor_dynamics"]["motor_tau"].as<Scalar>());
+      (1.0 / cfg["quadrotor_dynamics"]["motor_tau"].as<Scalar>());
 
   EXPECT_TRUE(quad.updateParams(cfg));
   EXPECT_EQ(mass, quad.getMass());

@@ -3,23 +3,23 @@
 namespace flightlib {
 
 QuadrotorDynamics::QuadrotorDynamics(const Scalar mass, const Scalar arm_l)
-  : mass_(mass),
-    arm_l_(arm_l),
-    t_BM_(
-      arm_l * sqrt(0.5) *
-      (Matrix<3, 4>() << 1, -1, -1, 1, -1, -1, 1, 1, 0, 0, 0, 0).finished()),
-    J_(mass / 12.0 * arm_l * arm_l * Vector<3>(4.5, 4.5, 7).asDiagonal()),
-    J_inv_(J_.inverse()),
-    motor_omega_min_(150.0),
-    motor_omega_max_(2000.0),
-    motor_tau_inv_(1.0 / 0.05),
-    thrust_map_(1.3298253500372892e-06, 0.0038360810526746033,
-                -1.7689986848125325),
-    kappa_(0.016),
-    thrust_min_(0.0),
-    thrust_max_(motor_omega_max_ * motor_omega_max_ * thrust_map_(0) +
-                motor_omega_max_ * thrust_map_(1) + thrust_map_(2)),
-    omega_max_(Vector<3>::Constant(6.0)) {}
+    : mass_(mass),
+      arm_l_(arm_l),
+      t_BM_(arm_l * sqrt(0.5) *
+            (Matrix<3, 4>() << 1, -1, -1, 1, -1, -1, 1, 1, 0, 0, 0, 0)
+                .finished()),
+      J_(mass / 12.0 * arm_l * arm_l * Vector<3>(4.5, 4.5, 7).asDiagonal()),
+      J_inv_(J_.inverse()),
+      motor_omega_min_(150.0),
+      motor_omega_max_(2000.0),
+      motor_tau_inv_(1.0 / 0.05),
+      thrust_map_(1.3298253500372892e-06, 0.0038360810526746033,
+                  -1.7689986848125325),
+      kappa_(0.016),
+      thrust_min_(0.0),
+      thrust_max_(motor_omega_max_ * motor_omega_max_ * thrust_map_(0) +
+                  motor_omega_max_ * thrust_map_(1) + thrust_map_(2)),
+      omega_max_(Vector<3>::Constant(6.0)) {}
 
 QuadrotorDynamics::~QuadrotorDynamics() {}
 
@@ -43,25 +43,25 @@ bool QuadrotorDynamics::dState(const Ref<const Vector<QuadState::SIZE>> state,
 
   // differentiate quaternion = dq / dt
   dstate.segment<QS::NATT>(QS::ATT) =
-    0.5 * Q_right(q_omega) * state.segment<QS::NATT>(QS::ATT);
+      0.5 * Q_right(q_omega) * state.segment<QS::NATT>(QS::ATT);
 
   // linear acceleration = dv / dt
   dstate.segment<QS::NVEL>(QS::VEL) = state.segment<QS::NACC>(QS::ACC);
 
   // angular accleration = domega / dt
   dstate.segment<QS::NOME>(QS::OME) =
-    J_inv_ * (body_torque - omega.cross(J_ * omega));
+      J_inv_ * (body_torque - omega.cross(J_ * omega));
   //
   return true;
 }
 
 QuadrotorDynamics::DynamicsFunction QuadrotorDynamics::getDynamicsFunction()
-  const {
+    const {
   return std::bind(
-    static_cast<bool (QuadrotorDynamics::*)(const Ref<const Vector<QS::SIZE>>,
-                                            Ref<Vector<QS::SIZE>>) const>(
-      &QuadrotorDynamics::dState),
-    this, std::placeholders::_1, std::placeholders::_2);
+      static_cast<bool (QuadrotorDynamics::*)(const Ref<const Vector<QS::SIZE>>,
+                                              Ref<Vector<QS::SIZE>>) const>(
+          &QuadrotorDynamics::dState),
+      this, std::placeholders::_1, std::placeholders::_2);
 }
 
 bool QuadrotorDynamics::valid() const {
@@ -105,20 +105,20 @@ Vector<3> QuadrotorDynamics::clampBodyrates(const Vector<3>& omega) const {
 
 Vector<4> QuadrotorDynamics::motorOmegaToThrust(const Vector<4>& omega) const {
   const Matrix<4, 3> omega_poly =
-    (Matrix<4, 3>() << omega.cwiseProduct(omega), omega, Vector<4>::Ones())
-      .finished();
+      (Matrix<4, 3>() << omega.cwiseProduct(omega), omega, Vector<4>::Ones())
+          .finished();
   return omega_poly * thrust_map_;
 }
 
 Vector<4> QuadrotorDynamics::motorThrustToOmega(
-  const Vector<4>& thrusts) const {
+    const Vector<4>& thrusts) const {
   const Scalar scale = 1.0 / (2.0 * thrust_map_[0]);
   const Scalar offset = -thrust_map_[1] * scale;
 
   const Array<4, 1> root =
-    (std::pow(thrust_map_[1], 2) -
-     4.0 * thrust_map_[0] * (thrust_map_[2] - thrusts.array()))
-      .sqrt();
+      (std::pow(thrust_map_[1], 2) -
+       4.0 * thrust_map_[0] * (thrust_map_[2] - thrusts.array()))
+          .sqrt();
 
   return offset + scale * root;
 }
@@ -126,7 +126,7 @@ Vector<4> QuadrotorDynamics::motorThrustToOmega(
 Matrix<4, 4> QuadrotorDynamics::getAllocationMatrix() const {
   return (Matrix<4, 4>() << Vector<4>::Ones().transpose(), t_BM_.topRows<2>(),
           kappa_ * Vector<4>(1, -1, 1, -1).transpose())
-    .finished();
+      .finished();
 }
 
 bool QuadrotorDynamics::setMass(const Scalar mass) {
@@ -163,19 +163,19 @@ bool QuadrotorDynamics::updateParams(const YAML::Node& params) {
     mass_ = params["quadrotor_dynamics"]["mass"].as<Scalar>();
     arm_l_ = params["quadrotor_dynamics"]["arm_l"].as<Scalar>();
     motor_omega_min_ =
-      params["quadrotor_dynamics"]["motor_omega_min"].as<Scalar>();
+        params["quadrotor_dynamics"]["motor_omega_min"].as<Scalar>();
     motor_omega_max_ =
-      params["quadrotor_dynamics"]["motor_omega_max"].as<Scalar>();
+        params["quadrotor_dynamics"]["motor_omega_max"].as<Scalar>();
     motor_tau_inv_ =
-      (1.0 / params["quadrotor_dynamics"]["motor_tau"].as<Scalar>());
+        (1.0 / params["quadrotor_dynamics"]["motor_tau"].as<Scalar>());
     std::vector<Scalar> thrust_map;
     thrust_map =
-      params["quadrotor_dynamics"]["thrust_map"].as<std::vector<Scalar>>();
+        params["quadrotor_dynamics"]["thrust_map"].as<std::vector<Scalar>>();
     thrust_map_ = Map<Vector<3>>(thrust_map.data());
     kappa_ = params["quadrotor_dynamics"]["kappa"].as<Scalar>();
     std::vector<Scalar> omega_max;
     omega_max =
-      params["quadrotor_dynamics"]["omega_max"].as<std::vector<Scalar>>();
+        params["quadrotor_dynamics"]["omega_max"].as<std::vector<Scalar>>();
     omega_max_ = Map<Vector<3>>(omega_max.data());
 
     // update relevant variables

@@ -133,7 +133,7 @@ struct PointCloudMessage_t {
  * JSON constructors *
  *********************/
 // Camera_t
-inline void to_json(json &j, const Camera_t &o) {
+inline void to_json(json& j, const Camera_t& o) {
   j = json{{"ID", o.ID},
            {"channels", o.channels},
            {"width", o.width},
@@ -149,7 +149,7 @@ inline void to_json(json &j, const Camera_t &o) {
 }
 
 // Lidar
-inline void to_json(json &j, const Lidar_t &o) {
+inline void to_json(json& j, const Lidar_t& o) {
   j = json{{"ID", o.ID},
            {"num_beams", o.num_beams},
            {"max_distance", o.max_distance},
@@ -158,7 +158,7 @@ inline void to_json(json &j, const Lidar_t &o) {
            {"T_BS", o.T_BS}};
 }
 // Vehicle_t
-inline void to_json(json &j, const Vehicle_t &o) {
+inline void to_json(json& j, const Vehicle_t& o) {
   j = json{{"ID", o.ID},
            {"position", o.position},
            {"rotation", o.rotation},
@@ -169,7 +169,7 @@ inline void to_json(json &j, const Vehicle_t &o) {
 }
 
 // Object_t
-inline void to_json(json &j, const Object_t &o) {
+inline void to_json(json& j, const Object_t& o) {
   j = json{{"ID", o.ID},
            {"prefabID", o.prefab_ID},
            {"position", o.position},
@@ -178,19 +178,21 @@ inline void to_json(json &j, const Object_t &o) {
 }
 
 // Setting messages, pub to unity
-inline void to_json(json &j, const SettingsMessage_t &o) {
-  j = json{
-    {"scene_id", o.scene_id}, {"vehicles", o.vehicles}, {"objects", o.objects}};
+inline void to_json(json& j, const SettingsMessage_t& o) {
+  j = json{{"scene_id", o.scene_id},
+           {"vehicles", o.vehicles},
+           {"objects", o.objects}};
 }
 
 // Publish messages to unity
-inline void to_json(json &j, const PubMessage_t &o) {
-  j = json{
-    {"frame_id", o.frame_id}, {"vehicles", o.vehicles}, {"objects", o.objects}};
+inline void to_json(json& j, const PubMessage_t& o) {
+  j = json{{"frame_id", o.frame_id},
+           {"vehicles", o.vehicles},
+           {"objects", o.objects}};
 }
 
 // Publish messages to unity
-inline void from_json(const json &j, Sub_Vehicle_t &o) {
+inline void from_json(const json& j, Sub_Vehicle_t& o) {
   o.collision = j.at("collision").get<bool>();
   o.lidar_ranges = j.at("lidar_ranges").get<std::vector<Scalar>>();
 }
@@ -198,12 +200,12 @@ inline void from_json(const json &j, Sub_Vehicle_t &o) {
 // json to our sub message data type
 // note: pub_vechicles is defined in Unity which corresponding
 // to our sub_vehicles in ROS.
-inline void from_json(const json &j, SubMessage_t &o) {
+inline void from_json(const json& j, SubMessage_t& o) {
   o.frame_id = j.at("frame_id").get<uint64_t>();
   o.sub_vehicles = j.at("pub_vehicles").get<std::vector<Sub_Vehicle_t>>();
 }
 
-inline void to_json(json &j, const PointCloudMessage_t &o) {
+inline void to_json(json& j, const PointCloudMessage_t& o) {
   j = json{{"range", o.range},
            {"origin", o.origin},
            {"resolution", o.resolution},

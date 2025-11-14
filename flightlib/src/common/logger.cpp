@@ -3,7 +3,7 @@
 namespace flightlib {
 
 Logger::Logger(const std::string& name, const bool color)
-  : sink_(std::cout.rdbuf()), colored_(color) {
+    : sink_(std::cout.rdbuf()), colored_(color) {
   name_ = "[" + name + "]";
 
   if (name_.size() < NAME_PADDING)
@@ -15,7 +15,7 @@ Logger::Logger(const std::string& name, const bool color)
 }
 
 Logger::Logger(const std::string& name, const std::string& filename)
-  : Logger(name, false) {
+    : Logger(name, false) {
   if (!filename.empty()) {
     std::filebuf* fbuf = new std::filebuf;
     if (fbuf->open(filename, std::ios::out))
