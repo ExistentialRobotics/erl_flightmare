@@ -1,12 +1,14 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.12)
 
 project(flightlib VERSION 0.1.0)
-
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 message(STATUS "======================  !Flightmare!  ======================")
 
-################################################################################
+# ##############################################################################
 # Options
-################################################################################
+# ##############################################################################
 option(BUILD_TESTS "Building the tests" ON)
 option(BUILD_UNITY_BRIDGE_TESTS "Building the Unity Bridge tests" ON)
 option(BUILD_BENCH "Building the benchmark." OFF)
@@ -14,14 +16,13 @@ option(ENABLE_FAST "Build with optimizations for speed" ON)
 option(ENABLE_BLAS "Build using BLAS and LAPACK libraries" OFF)
 option(ENABLE_PARALLEL "Build using openmp parallelization" ON)
 option(EIGEN_FROM_SYSTTEM "Use the system-provided Eigen" ON)
-set(
-  EIGEN_ALTERNATIVE "" CACHE STRING
-  "Path to alternative Eigen, autodownload if blank"
-)
+set(EIGEN_ALTERNATIVE
+    ""
+    CACHE STRING "Path to alternative Eigen, autodownload if blank")
 
-################################################################################
+# ##############################################################################
 # Finding Dependencies
-################################################################################
+# ##############################################################################
 
 message(STATUS "======> Setup Dependencies")
 if(EIGEN_FROM_SYSTTEM)
@@ -42,11 +43,11 @@ endif()
 
 message(STATUS "Eigen3 include dir: ${EIGEN3_INCLUDE_DIR}")
 
-# Including dependencies 
+# Including dependencies
 include(cmake/pybind11.cmake)
 include(cmake/yaml.cmake)
 
-# Including dependencies 
+# Including dependencies
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(OpenMP REQUIRED)
@@ -78,34 +79,44 @@ if(NOT DEFINED CATKIN_DEVEL_PREFIX)
   endif()
 endif()
 
-################################################################################
+# ##############################################################################
 # Setup Compilation
-################################################################################
+# ##############################################################################
 message(STATUS "======> Setup Compilation")
 
 add_definitions(-DEIGEN_STACK_ALLOCATION_LIMIT=1048576)
 include_directories(${EIGEN_INCLUDE_DIR} "tests")
-include_directories(${OpenCV_INCLUDE_DIRS})
 
+include_directories(${OpenCV_INCLUDE_DIRS})
 # Set default build type
-if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
-  if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
+  if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE
+        "Release"
+        CACHE STRING "" FORCE)
   endif()
 endif()
 
-# Add c++ flags 
+# Add c++ flags
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -fPIC -Wall -DNDEBUG  -fopenmp")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fPIC -Wall -g -fopenmp")
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # allows for tools like clang-tidy to work
+
+include(CMakePackageConfigHelpers)
+
+set(INSTALL_CONFIGDIR lib/cmake/flightlib)
 
 # Architectural flags
 if("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "armv7l")
   message(STATUS "Using ARMv7 optimized flags!")
-  set(CMAKE_CXX_ARCH_FLAGS " -Wno-psabi -march=armv7-a -mfpu=neon -mfloat-abi=hard -funsafe-math-optimizations")
+  set(CMAKE_CXX_ARCH_FLAGS
+      " -Wno-psabi -march=armv7-a -mfpu=neon -mfloat-abi=hard -funsafe-math-optimizations"
+  )
 elseif("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "aarch64")
   message(STATUS "Using ARM aarch64 optimized flags!")
-  set(CMAKE_CXX_ARCH_FLAGS " -Wno-psabi -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
+  set(CMAKE_CXX_ARCH_FLAGS
+      " -Wno-psabi -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
 else()
   set(CMAKE_CXX_ARCH_FLAGS " -march=native")
 endif()
@@ -118,64 +129,65 @@ else()
   set(CMAKE_CXX_FAST_FLAGS " -O0")
 endif()
 
-
 # BLAS Flags
 if(BLAS_FOUND AND LAPACK_FOUND)
   message(STATUS "Enabling BLAS and LAPACK")
-  set(CMAKE_CXX_BLAS_FLAGS " -DEIGEN_USE_BLAS -DEIGEN_USE_LAPACK -DEIGEN_USE_LAPACKE")
+  set(CMAKE_CXX_BLAS_FLAGS
+      " -DEIGEN_USE_BLAS -DEIGEN_USE_LAPACK -DEIGEN_USE_LAPACKE")
 else()
   set(CMAKE_CXX_BLAS_FLAGS "")
 endif()
 
 # Summarize Flags
 set(CMAKE_CXX_FLAGS_RELEASE
-  "${CMAKE_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FAST_FLAGS} ${CMAKE_CXX_ARCH_FLAGS} ${CMAKE_CXX_PAR_FLAGS}")
-string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-message(STATUS "The activated CXX RELEASE configuration is:\n ${CMAKE_CXX_FLAGS_RELEASE}")
-message(STATUS "The activated CXX DEBUG configuration is:\n ${CMAKE_CXX_FLAGS_DEBUG}")
+    "${CMAKE_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FAST_FLAGS} ${CMAKE_CXX_ARCH_FLAGS} ${CMAKE_CXX_PAR_FLAGS}"
+)
+string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO
+               "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+message(
+  STATUS
+    "The activated CXX RELEASE configuration is:\n ${CMAKE_CXX_FLAGS_RELEASE}")
+message(
+  STATUS "The activated CXX DEBUG configuration is:\n ${CMAKE_CXX_FLAGS_DEBUG}")
 
-################################################################################
+# ##############################################################################
 # Specify Build Resources
-################################################################################
+# ##############################################################################
 message(STATUS "======>  Setup Build  ")
 
 # Create file lists for flightlib source
-file(GLOB_RECURSE FLIGHTLIB_SOURCES
+file(
+  GLOB_RECURSE
+  FLIGHTLIB_SOURCES
   src/bridges/*.cpp
   src/dynamics/*.cpp
   src/objects/*.cpp
   src/sensors/*.cpp
   src/envs/*.cpp
-  src/common/*.cpp
-)
+  src/common/*.cpp)
 
 # Create file lists for flightlib tests
-file(GLOB_RECURSE FLIGHTLIB_TEST_SOURCES
+file(
+  GLOB_RECURSE
+  FLIGHTLIB_TEST_SOURCES
   tests/dynamics/*.cpp
   tests/objects/*.cpp
-  tests/sensors/*.cpp  
+  tests/sensors/*.cpp
   tests/envs/*.cpp
-  tests/common/*.cpp
-)
+  tests/common/*.cpp)
 
-# Create file lists for flightlib_gym source 
-file(GLOB_RECURSE FLIGHTLIB_GYM_SOURCES
-  src/wrapper/*.cpp 
-)
+# Create file lists for flightlib_gym source
+file(GLOB_RECURSE FLIGHTLIB_GYM_SOURCES src/wrapper/*.cpp)
 
 # Create file lists for flightlib_gym tests
-file(GLOB_RECURSE FLIGHTLIB_GYM_TEST_SOURCES
-  tests/wrapper/*.cpp
-)
+file(GLOB_RECURSE FLIGHTLIB_GYM_TEST_SOURCES tests/wrapper/*.cpp)
 
 # Create file lists for flightlib_unity_bridge tests
-file(GLOB_RECURSE FLIGHTLIB_UNITY_BRIDGE_TEST_SOURCES
-  tests/bridges/*.cpp
-)
+file(GLOB_RECURSE FLIGHTLIB_UNITY_BRIDGE_TEST_SOURCES tests/bridges/*.cpp)
 
-################################################################################
+# ##############################################################################
 # Optional Catkin Build
-################################################################################
+# ##############################################################################
 
 if(DEFINED CATKIN_DEVEL_PREFIX)
   message(STATUS "======>  Building with -- catkin -- ")
@@ -183,9 +195,9 @@ if(DEFINED CATKIN_DEVEL_PREFIX)
   return()
 endif()
 
-################################################################################
+# ##############################################################################
 # Setup Build
-################################################################################
+# ##############################################################################
 
 # Setup Testing and Benchmark
 if(BUILD_TESTS OR BUILD_BENCH)
@@ -197,77 +209,99 @@ endif()
 include_directories(include)
 
 if(NOT FLIGHTLIB_SOURCES)
-	set(LIBRARY_NAME)
+  set(LIBRARY_NAME)
 else()
   # flightlib
-  add_library(${PROJECT_NAME} ${FLIGHTLIB_SOURCES})
-  target_link_libraries(${PROJECT_NAME} PRIVATE
-    ${OpenCV_LIBRARIES}
-    yaml-cpp
-    zmq
-    zmqpp
-    stdc++fs)
+  add_library(${PROJECT_NAME} SHARED ${FLIGHTLIB_SOURCES})
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBRARIES} yaml-cpp zmq
+                                               zmqpp stdc++fs)
   set(LIBRARY_NAME ${PROJECT_NAME})
-  set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+  set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE
+                                                   TRUE EXPORT_NAME flightlib)
+  install(
+    TARGETS ${PROJECT_NAME}
+    EXPORT flightlibTargets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    INCLUDES
+    DESTINATION include)
+
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
+
+  # Export target for downstream projects
+  install(
+    EXPORT flightlibTargets
+    FILE flightlibTargets.cmake
+    NAMESPACE flightlib::
+    DESTINATION ${INSTALL_CONFIGDIR})
+  # Generate and install package config
+  configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/flightlibConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/flightlibConfig.cmake
+    INSTALL_DESTINATION ${INSTALL_CONFIGDIR})
+
+  write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/flightlibConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/flightlibConfig.cmake
+                ${CMAKE_CURRENT_BINARY_DIR}/flightlibConfigVersion.cmake
+          DESTINATION ${INSTALL_CONFIGDIR})
 endif()
 
 if(FLIGHTLIB_GYM_SOURCES)
   # flightlib_gym (python3 binding with Pybind11)
-  pybind11_add_module(flightgym MODULE 
-    ${FLIGHTLIB_GYM_SOURCES})
+  pybind11_add_module(flightgym MODULE ${FLIGHTLIB_GYM_SOURCES})
   if(EIGEN3_FOUND)
-    target_include_directories(flightgym PRIVATE
-      # ${PROJECT_SOURCE_DIR}/externals/pybind11-src/include
-      ${PYBIND11_INCLUDE_DIR}
-      ${PROJECT_SOURCE_DIR}/include
-      ${EIGEN3_INCLUDE_DIR})  
+    target_include_directories(
+      flightgym
+      PRIVATE # ${PROJECT_SOURCE_DIR}/externals/pybind11-src/include
+              ${PYBIND11_INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/include
+              ${EIGEN3_INCLUDE_DIR})
   else()
-    target_include_directories(flightgym PRIVATE
-      # ${PROJECT_SOURCE_DIR}/externals/pybind11-src/include
-      ${PYBIND11_INCLUDE_DIR}
-      ${PROJECT_SOURCE_DIR}/externals/eigen/eigen3 #pybind11 use #include <Eigen/Core>, however, flightmare use #include <eigen3/Eigen/Core>
-      ${PROJECT_SOURCE_DIR}/include)  
+    target_include_directories(
+      flightgym
+      PRIVATE
+        # ${PROJECT_SOURCE_DIR}/externals/pybind11-src/include
+        ${PYBIND11_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/externals/eigen/eigen3 # pybind11 use #include
+                                                     # <Eigen/Core>, however,
+                                                     # flightmare use #include
+                                                     # <eigen3/Eigen/Core>
+        ${PROJECT_SOURCE_DIR}/include)
   endif()
-  target_link_libraries(flightgym PRIVATE ${LIBRARY_NAME} )
+  target_link_libraries(flightgym PRIVATE ${LIBRARY_NAME})
 endif()
 
-if(ENABLE_BLAS AND BLAS_FOUND AND LAPACK_FOUND)
+if(ENABLE_BLAS
+   AND BLAS_FOUND
+   AND LAPACK_FOUND)
   message(STATUS "Linking standard BLAS ${BLAS_LIBRARIES}")
-  target_link_libraries(${LIBRARY_NAME}
-    ${BLAS_LIBRARIES}
-    ${LAPACK_LIBRARIES}
-    ${LAPACKE_LIBRARIES}
-  )
+  target_link_libraries(${LIBRARY_NAME} ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES}
+                        ${LAPACKE_LIBRARIES})
 endif()
 
 # Build tests for flightlib gym wrapper
 if(BUILD_TESTS AND FLIGHTLIB_GYM_TEST_SOURCES)
   add_executable(test_gym ${FLIGHTLIB_GYM_TEST_SOURCES})
-  target_link_libraries(test_gym
-    ${LIBRARY_NAME}
-    gtest
-    gtest_main)
-add_test(test_gym test_gym)
+  target_link_libraries(test_gym ${LIBRARY_NAME} gtest gtest_main)
+  add_test(test_gym test_gym)
 endif()
 
 # Build tests for flightlib
 if(BUILD_TESTS AND FLIGHTLIB_TEST_SOURCES)
   add_executable(test_lib ${FLIGHTLIB_TEST_SOURCES})
-  target_link_libraries(test_lib PUBLIC
-    ${LIBRARY_NAME}
-    gtest
-    gtest_main)
-add_test(test_lib test_lib)
+  target_link_libraries(test_lib PUBLIC ${LIBRARY_NAME} gtest gtest_main)
+  add_test(test_lib test_lib)
 endif()
 
 # Build tests for flightlib unity bridge
 if(BUILD_UNITY_BRIDGE_TESTS AND FLIGHTLIB_UNITY_BRIDGE_TEST_SOURCES)
   add_executable(test_unity_bridge ${FLIGHTLIB_UNITY_BRIDGE_TEST_SOURCES})
-  target_link_libraries(test_unity_bridge PUBLIC
-    ${LIBRARY_NAME}
-    gtest
-    gtest_main)
-add_test(test_unity_bridge test_unity_bridge)
+  target_link_libraries(test_unity_bridge PUBLIC ${LIBRARY_NAME} gtest
+                                                 gtest_main)
+  add_test(test_unity_bridge test_unity_bridge)
 endif()
 
 message(STATUS "================  !Done. No more nightmare!  ================")
