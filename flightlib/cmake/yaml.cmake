@@ -22,6 +22,33 @@ if(result)
 endif()
 
 message(STATUS "Yaml downloaded!")
+#
+# --- Build yaml-cpp after download ---
+#
+message(STATUS "Configuring yaml-cpp...")
+
+# Configure step (creates externals/yaml-build)
+execute_process(
+  COMMAND
+    ${CMAKE_COMMAND} -S "${PROJECT_SOURCE_DIR}/externals/yaml-src" -B
+    "${PROJECT_SOURCE_DIR}/externals/yaml-build" -DYAML_CPP_BUILD_TESTS=OFF
+    -DYAML_CPP_INSTALL=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+  RESULT_VARIABLE result)
+if(result)
+  message(FATAL_ERROR "Failed to configure yaml-cpp: ${result}")
+endif()
+
+message(STATUS "Building yaml-cpp...")
+
+# Build step (creates libyaml-cpp.a)
+execute_process(
+  COMMAND ${CMAKE_COMMAND} --build "${PROJECT_SOURCE_DIR}/externals/yaml-build"
+  RESULT_VARIABLE result)
+if(result)
+  message(FATAL_ERROR "Failed to build yaml-cpp: ${result}")
+endif()
+
+message(STATUS "yaml-cpp built successfully!")
 
 # add_subdirectory(${PROJECT_SOURCE_DIR}/externals/yaml-src
 # ${PROJECT_SOURCE_DIR}/externals/yaml-build EXCLUDE_FROM_ALL)
