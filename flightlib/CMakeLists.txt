@@ -49,6 +49,7 @@ include(cmake/yaml.cmake)
 
 # Including dependencies
 find_package(OpenCV REQUIRED)
+find_package(nlohmann_json REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(OpenMP REQUIRED)
 
@@ -213,8 +214,9 @@ if(NOT FLIGHTLIB_SOURCES)
 else()
   # flightlib
   add_library(${PROJECT_NAME} SHARED ${FLIGHTLIB_SOURCES})
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBRARIES} yaml-cpp zmq
-                                               zmqpp stdc++fs)
+  target_link_libraries(
+    ${PROJECT_NAME} PUBLIC ${OpenCV_LIBRARIES} yaml-cpp zmq zmqpp stdc++fs
+                           nlohmann_json::nlohmann_json)
   set(LIBRARY_NAME ${PROJECT_NAME})
   set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE
                                                    TRUE EXPORT_NAME flightlib)
