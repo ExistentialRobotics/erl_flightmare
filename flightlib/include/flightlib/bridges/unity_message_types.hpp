@@ -7,14 +7,15 @@
 // std
 #include <string>
 
+// json
+#include <nlohmann/json.hpp>
+
 // opencv
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
-
 // flightlib
 #include "flightlib/common/types.hpp"
-#include "flightlib/json/json.hpp"
 
 using json = nlohmann::json;
 
