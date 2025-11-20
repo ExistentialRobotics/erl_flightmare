@@ -215,8 +215,9 @@ else()
   # flightlib
   add_library(${PROJECT_NAME} SHARED ${FLIGHTLIB_SOURCES})
   target_link_libraries(
-    ${PROJECT_NAME} PUBLIC ${OpenCV_LIBRARIES} yaml-cpp zmq zmqpp stdc++fs
-                           nlohmann_json::nlohmann_json)
+    ${PROJECT_NAME}
+    PUBLIC ${OpenCV_LIBRARIES} yaml-cpp zmq zmqpp stdc++fs
+    PRIVATE nlohmann_json::nlohmann_json)
   set(LIBRARY_NAME ${PROJECT_NAME})
   set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE
                                                    TRUE EXPORT_NAME flightlib)
