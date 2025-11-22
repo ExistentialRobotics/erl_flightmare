@@ -84,6 +84,7 @@ session:
 			-e DISPLAY=${DISPLAY} \
 			-v /dev/bus/usb:/dev/bus/usb \
 			--device-cgroup-rule='c 189:* rmw' \
+			--device=/dev/dri:/dev/dri \
 			--device /dev/video0 \
 			--volume=/dev/input:/dev/input \
 			--volume=${HOME}/.Xauthority:/root/.Xauthority:rw \
