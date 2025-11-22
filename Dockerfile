@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ssh \
     curl \
     wget \
+    gdb \
     libomp-dev \
     software-properties-common \
     wget \
@@ -41,6 +42,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # libzmq3-dev \
     # libboost-all-dev \
     nlohmann-json3-dev \
+    libeigen3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/packages
@@ -130,6 +132,6 @@ RUN cd /root/erl/erl_flightmare/flightlib && \
     pip3 install .
 
 RUN cd /root/erl/erl_flightmare/flightlib/build && \
-    cmake .. && \
+    cmake -DCMAKE_BUILD_TYPE=Debug .. && \
     make -j$(nproc) && \
     make install
