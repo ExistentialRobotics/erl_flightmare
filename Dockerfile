@@ -3,12 +3,13 @@ SHELL ["/bin/bash", "-o", "pipefail", "-ic"]
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Installing some essential system packages
+# Install dependencies for flightmare
 RUN apt-get update && apt-get install -y --no-install-recommends \
    lsb-release \
    build-essential \
    python3 python3-dev python3-pip \
    cmake \
+   gdb \
    openssh-client \
    git \
    vim \
@@ -37,6 +38,11 @@ RUN cd /home && \
     make client && \
     make install && \
     ldconfig
+
+# Install dependencies for agilib
+RUN apt-get update && apt-get install -y --no-install-recommends \
+   libeigen3-dev \
+   && rm -rf /var/lib/apt/lists/*
 
 from flightmare_base as flightmare_deps
 WORKDIR /home/erl
@@ -79,7 +85,7 @@ RUN cd /home/erl/erl_flightmare/flightlib && \
     pip3 install .
 
 RUN cd /home/erl/erl_flightmare/flightlib/build && \
-    cmake .. && \
+    cmake -DCMAKE_BUILD_TYPE=Debug .. && \
     make -j$(nproc) && \
     make install
 
@@ -96,6 +102,6 @@ RUN cd /home/erl/erl_flightmare/flightlib && \
     pip3 install .
 
 RUN cd /home/erl/erl_flightmare/flightlib/build && \
-    cmake .. && \
+    cmake -DCMAKE_BUILD_TYPE=Debug .. && \
     make -j$(nproc) && \
     make install
