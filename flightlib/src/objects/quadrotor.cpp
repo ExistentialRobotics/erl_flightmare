@@ -179,7 +179,7 @@ bool Quadrotor::constrainInWorldBox(const QuadState& old_state) {
     state_.x(QS::VELY) = 0.0;
   }
 
-  // violate world box constraint in the x-axis
+  // violate world box constraint in the z-axis
   if (state_.x(QS::POSZ) <= world_box_(2, 0) ||
       state_.x(QS::POSZ) > world_box_(2, 1)) {
     //
@@ -188,7 +188,7 @@ bool Quadrotor::constrainInWorldBox(const QuadState& old_state) {
     // reset velocity to zero
     state_.x(QS::VELX) = 0.0;
     state_.x(QS::VELY) = 0.0;
-
+    state_.x(QS::VELZ) = 0.0;
     // reset acceleration to zero
     state_.a << 0.0, 0.0, 0.0;
     // reset angular velocity to zero
