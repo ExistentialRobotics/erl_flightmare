@@ -5,12 +5,7 @@ SHELL := /bin/bash
 
 .PHONY: build-docker
 build-docker:
-	@TARGET=${TARGET}
 	@SSH_FILE_PATH=${SSH_FILE_PATH}
-	if [ "${TARGET}" == "" ]; then
-		TARGET="flightmare"
-		echo "Now compiling image target: ${TARGET}"
-	fi
 	eval $(ssh-agent)
 	if [ -z "${SSH_FILE_PATH}" ]; then \
 		if [ -f "${HOME}/.ssh/id_ed25519" ]; then \
@@ -31,9 +26,9 @@ build-docker:
 	DOCKER_BUILDKIT=1 docker build \
 		--network=host \
 		-f Dockerfile \
-		--target $${TARGET} \
+		--target flightmare \
 		--ssh default=${SSH_AUTH_SOCK} \
-		-t erl_flightmare:$${TARGET} .
+		-t erl_flightmare .
 
 .PHONY: docker-cache-clean
 docker-cache-clean:
@@ -49,7 +44,7 @@ session:
 		CONT_NAME="flightmare_container"
 	fi
 	if [ "${TAG}" == "" ]; then
-		TAG="flightmare"
+		TAG="latest"
 	fi
 	IMG_NAME=erl_flightmare:$${TAG}
 	if [ "${RUNTIME}" = "nvidia" ]; then
@@ -71,7 +66,7 @@ session:
 			--volume=/dev/input:/dev/input \
 			--volume=${HOME}/.Xauthority:/root/.Xauthority:rw \
 			--volume=/tmp/.X11-unix/:/tmp/.X11-unix \
-			--volume=${PWD}/../flightmare_example/:/home/erl/flightmare_example \
+			--volume=${PWD}/../flightmare_example/:/root/erl/flightmare_example \
 			$${IMG_NAME} ${ENTRYPOINT}
 	else
 		xhost +
@@ -89,7 +84,7 @@ session:
 			--volume=/dev/input:/dev/input \
 			--volume=${HOME}/.Xauthority:/root/.Xauthority:rw \
 			--volume=/tmp/.X11-unix/:/tmp/.X11-unix \
-			--volume=${PWD}/../flightmare_example/:/home/erl/flightmare_example \
+			--volume=${PWD}/../flightmare_example/:/root/erl/flightmare_example \
 			$${IMG_NAME} ${ENTRYPOINT}
 	fi
 

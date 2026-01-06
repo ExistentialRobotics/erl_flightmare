@@ -5,18 +5,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV ROS_DISTRO=humble
 
 # ------------------------------------------------------------
-# Add GitHub to known hosts for private repositories
-# ------------------------------------------------------------
-RUN mkdir -p ~/.ssh \
-    && ssh-keyscan github.com >> ~/.ssh/known_hosts \
-    && ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-
-# ------------------------------------------------------------
 # System dependencies
 # ------------------------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
     lsb-release \
     build-essential \
+    autoconf automake \
+    libtool libtool-bin \
+    pkg-config \
     python3 python3-dev python3-pip \
     cmake \
     git \
@@ -38,12 +34,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     net-tools \
     openssh-client \
-    # libsodium-dev \
-    # libzmq3-dev \
-    # libboost-all-dev \
     nlohmann-json3-dev \
     libeigen3-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# ------------------------------------------------------------
+# Add GitHub to known hosts for private repositories
+# ------------------------------------------------------------
+RUN mkdir -p ~/.ssh \
+    && ssh-keyscan github.com >> ~/.ssh/known_hosts \
+    && ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
 
 WORKDIR /root/packages
 # ------------------------------------------------------------
@@ -63,11 +63,11 @@ RUN --mount=type=ssh \
     git clone git@github.com:zeromq/zmqpp.git && \
     cd zmqpp && \
     make && \
-    # make client && \
     make install && \
     ldconfig
 
 FROM flightmare_base AS flightmare_deps
+WORKDIR /root/erl
 # ------------------------------------------------------------
 # Installing miniconda
 # ------------------------------------------------------------
@@ -103,7 +103,7 @@ FROM flightmare_deps AS flightmare_ros
 # ------------------------------------------------------------
 RUN add-apt-repository universe && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
 # ------------------------------------------------------------
 # Install ROS2
@@ -132,6 +132,6 @@ RUN cd /root/erl/erl_flightmare/flightlib && \
     pip3 install .
 
 RUN cd /root/erl/erl_flightmare/flightlib/build && \
-    cmake -DCMAKE_BUILD_TYPE=Debug .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \
     make -j$(nproc) && \
     make install
