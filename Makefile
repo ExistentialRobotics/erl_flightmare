@@ -66,7 +66,7 @@ session:
 			--volume=/dev/input:/dev/input \
 			--volume=${HOME}/.Xauthority:/root/.Xauthority:rw \
 			--volume=/tmp/.X11-unix/:/tmp/.X11-unix \
-			--volume=${PWD}/../flightmare_example/:/root/erl/flightmare_example \
+			--volume=${PWD}/../erl_pilots/:/root/erl/erl_pilots \
 			$${IMG_NAME} ${ENTRYPOINT}
 	else
 		xhost +
@@ -84,7 +84,7 @@ session:
 			--volume=/dev/input:/dev/input \
 			--volume=${HOME}/.Xauthority:/root/.Xauthority:rw \
 			--volume=/tmp/.X11-unix/:/tmp/.X11-unix \
-			--volume=${PWD}/../flightmare_example/:/root/erl/flightmare_example \
+			--volume=${PWD}/../erl_pilots/:/root/erl/erl_pilots \
 			$${IMG_NAME} ${ENTRYPOINT}
 	fi
 

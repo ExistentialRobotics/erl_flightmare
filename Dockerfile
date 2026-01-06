@@ -110,7 +110,22 @@ RUN add-apt-repository universe && \
 # ------------------------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-$ROS_DISTRO-desktop-full \
+    ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
+    ros-$ROS_DISTRO-foxglove-msgs \
+    python3-setuptools \
+    python3-colcon-common-extensions \
+    python3-colcon-mixin \
+    python3-vcstool \
+    python3-rosdep \
     && rm -rf /var/lib/apt/lists/*
+
+RUN colcon mixin add default \
+    https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
+    colcon mixin update && \
+    colcon metadata add default \
+    https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
+    colcon metadata update && \
+    rosdep init
 
 # ------------------------------------------------------------
 # Environment variables
