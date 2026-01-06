@@ -28,6 +28,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     wget \
     gdb \
+    xterm \
+    nano \
     libomp-dev \
     software-properties-common \
     wget \
@@ -71,28 +73,28 @@ WORKDIR /root/erl
 # ------------------------------------------------------------
 # Installing miniconda
 # ------------------------------------------------------------
-RUN cd /root/erl && \
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p /root/erl/miniconda3 && \
-    rm Miniconda3-latest-Linux-x86_64.sh
+# RUN cd /root/erl && \
+#     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+#     bash Miniconda3-latest-Linux-x86_64.sh -b -p /root/erl/miniconda3 && \
+#     rm Miniconda3-latest-Linux-x86_64.sh
 
-RUN echo "export PATH=/root/erl/miniconda3/bin:\$PATH" >> ~/.bashrc && \
-    source ~/.bashrc && \
-    conda init bash && \
-    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
-    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r && \
-    conda config --set always_yes yes --set changeps1 no && \
-    conda create -n flightmare python=3.6 pip && \
-    echo "conda activate flightmare" >> ~/.bashrc && \
-    source ~/.bashrc && \
-    conda activate flightmare && \
-    pip install --upgrade pip setuptools
+# RUN echo "export PATH=/root/erl/miniconda3/bin:\$PATH" >> ~/.bashrc && \
+#     source ~/.bashrc && \
+#     conda init bash && \
+#     conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
+#     conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r && \
+#     conda config --set always_yes yes --set changeps1 no && \
+#     conda create -n flightmare python=3.6 pip && \
+#     echo "conda activate flightmare" >> ~/.bashrc && \
+#     source ~/.bashrc && \
+#     conda activate flightmare && \
+#     pip install --upgrade pip setuptools
 
-RUN pip install \
-    tensorflow-gpu==1.14 \
-    scikit-build \
-    opencv-python==4.5.5.64 \
-    ruamel.yaml==0.16
+# RUN pip install \
+#     tensorflow-gpu==1.14 \
+#     scikit-build \
+#     opencv-python==4.5.5.64 \
+#     ruamel.yaml==0.16
 
 RUN echo "export FLIGHTMARE_PATH=/root/erl/erl_flightmare" >> ~/.bashrc && \
     source ~/.bashrc
@@ -141,12 +143,13 @@ RUN --mount=type=ssh \
     cd /root/erl/ && \
     git clone git@github.com:ExistentialRobotics/erl_flightmare.git
 
-RUN cd /root/erl/erl_flightmare/flightlib && \
-    pip3 install . && \
-    cd /root/erl/erl_flightmare/flightrl && \
-    pip3 install .
+# RUN cd /root/erl/erl_flightmare/flightlib && \
+#     pip3 install . && \
+#     cd /root/erl/erl_flightmare/flightrl && \
+#     pip3 install .
 
 RUN cd /root/erl/erl_flightmare/flightlib/build && \
     cmake -DCMAKE_BUILD_TYPE=Release .. && \
     make -j$(nproc) && \
-    make install
+    make install && \
+    ldconfig
