@@ -58,9 +58,7 @@ RUN --mount=type=ssh \
     ./autogen.sh && \
     ./configure && make && \
     make install && \
-    ldconfig
-
-RUN --mount=type=ssh \
+    ldconfig && \
     cd /root/packages && \
     git clone git@github.com:zeromq/zmqpp.git && \
     cd zmqpp && \
