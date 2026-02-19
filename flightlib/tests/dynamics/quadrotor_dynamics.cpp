@@ -99,7 +99,7 @@ TEST(QuadrotorDynamics, LoadParams) {
 
   YAML::Node cfg = YAML::LoadFile(cfg_path);
   const Scalar mass = cfg["quadrotor_dynamics"]["mass"].as<Scalar>();
-  const Scalar arm_l = cfg["quadrotor_dynamics"]["arm_l"].as<Scalar>();
+  const Scalar arm_l = cfg["quadrotor_dynamics"]["arm_length"].as<Scalar>();
   const Scalar motor_tau_inv =
       (1.0 / cfg["quadrotor_dynamics"]["motor_tau"].as<Scalar>());
 

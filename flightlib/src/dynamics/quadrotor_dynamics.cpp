@@ -161,7 +161,7 @@ bool QuadrotorDynamics::updateParams(const YAML::Node& params) {
   if (params["quadrotor_dynamics"]) {
     // load parameters from a yaml configuration file
     mass_ = params["quadrotor_dynamics"]["mass"].as<Scalar>();
-    arm_l_ = params["quadrotor_dynamics"]["arm_l"].as<Scalar>();
+    arm_l_ = params["quadrotor_dynamics"]["arm_length"].as<Scalar>();
     motor_omega_min_ =
         params["quadrotor_dynamics"]["motor_omega_min"].as<Scalar>();
     motor_omega_max_ =
