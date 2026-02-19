@@ -113,7 +113,6 @@ Vector<4> Quadrotor::runFlightCtl(const Scalar sim_dt, const Vector<3>& omega,
                                     body_torque_des.y(), body_torque_des.z());
 
   const Vector<4> motor_thrusts_des = B_allocation_inv_ * thrust_and_torque;
-
   return dynamics_.clampThrust(motor_thrusts_des);
 }
 
@@ -137,7 +136,8 @@ bool Quadrotor::setCommand(const Command& cmd) {
   cmd_ = cmd;
 
   if (std::isfinite(cmd_.collective_thrust))
-    cmd_.collective_thrust = dynamics_.clampThrust(cmd_.collective_thrust);
+    cmd_.collective_thrust =
+        dynamics_.clampCollectiveThrust(cmd_.collective_thrust);
 
   if (cmd_.omega.allFinite()) cmd_.omega = dynamics_.clampBodyrates(cmd_.omega);
 

@@ -95,6 +95,13 @@ Scalar QuadrotorDynamics::clampThrust(const Scalar thrust) const {
   return std::clamp(thrust, thrust_min_, thrust_max_);
 }
 
+Scalar QuadrotorDynamics::clampCollectiveThrust(
+    const Scalar mass_normalized_thrust) const {
+  return (1 / mass_) * std::clamp(mass_ * mass_normalized_thrust,
+                                  collective_thrust_min(),
+                                  collective_thrust_max());
+}
+
 Vector<4> QuadrotorDynamics::clampMotorOmega(const Vector<4>& omega) const {
   return omega.cwiseMax(motor_omega_min_).cwiseMin(motor_omega_max_);
 }
@@ -177,6 +184,15 @@ bool QuadrotorDynamics::updateParams(const YAML::Node& params) {
     omega_max =
         params["quadrotor_dynamics"]["omega_max"].as<std::vector<Scalar>>();
     omega_max_ = Map<Vector<3>>(omega_max.data());
+    if (params["quadrotor_dynamics"]["thrust_min"]) {
+      thrust_min_ = params["quadrotor_dynamics"]["thrust_min"].as<Scalar>();
+    }
+    if (params["quadrotor_dynamics"]["thrust_max"]) {
+      thrust_max_ = params["quadrotor_dynamics"]["thrust_max"].as<Scalar>();
+    } else {
+      thrust_max_ = motor_omega_max_ * motor_omega_max_ * thrust_map_(0) +
+                    motor_omega_max_ * thrust_map_(1) + thrust_map_(2);
+    }
 
     // update relevant variables
     updateInertiaMarix();

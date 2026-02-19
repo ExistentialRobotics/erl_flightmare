@@ -34,6 +34,8 @@ class QuadrotorDynamics : DynamicsBase {
   Vector<4> clampThrust(const Vector<4> thrusts) const;
   Scalar clampThrust(const Scalar thrust) const;
 
+  Scalar clampCollectiveThrust(const Scalar thrust) const;
+
   Vector<4> clampMotorOmega(const Vector<4>& omega) const;
   Vector<3> clampBodyrates(const Vector<3>& omega) const;
 
