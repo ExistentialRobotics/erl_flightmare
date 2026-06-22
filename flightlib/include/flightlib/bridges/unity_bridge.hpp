@@ -44,6 +44,10 @@ class UnityBridge {
   bool connectUnity(const SceneID scene_id);
   bool disconnectUnity(void);
 
+  // Send ETERM to all blocking socket operations without waiting for sockets
+  // to be closed.  Safe to call from a thread that does not own the sockets.
+  void shutdownContext(void);
+
   // public get functions
   bool getRender(const FrameID frame_id);
   bool handleOutput();

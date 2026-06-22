@@ -74,6 +74,15 @@ bool UnityBridge::disconnectUnity() {
   return true;
 }
 
+void UnityBridge::shutdownContext() {
+  // zmq_ctx_shutdown sends ETERM to all blocking socket operations
+  // (e.g. a receive blocking in handleOutput()) without waiting for the
+  // sockets to be closed.  Unlike zmq_ctx_term / context::terminate(), it
+  // returns immediately, so it is safe to call from a thread that does not
+  // own the sockets.
+  zmq_ctx_shutdown(static_cast<void*>(context_));
+}
+
 bool UnityBridge::sendInitialSettings(void) {
   // create new message object
   zmqpp::message msg;
